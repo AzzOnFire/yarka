@@ -1,5 +1,6 @@
 from collections import UserList
 import inspect
+import re
 from typing import Any, Dict, List, Union, Optional, Iterable, Callable
 import textwrap
 
@@ -64,7 +65,8 @@ class RuleBuilder(object):
         return self
 
     def build(self):
-        result = f"rule {self.name}"
+        sanitized_name = self.sanitize_rule_name(self.name)
+        result = f"rule {sanitized_name}"
         result += '\n' if self.wrap_curly_brace else ' '
         result += '{\n'
 
@@ -122,6 +124,22 @@ class RuleBuilder(object):
 
     def is_empty(self) -> bool:
         return len(self.strings) == 0
+
+    @classmethod
+    def is_rule_name_valid(cls, name: str) -> bool:
+        return cls.sanitize_rule_name(name) == name
+
+    @staticmethod
+    def sanitize_rule_name(name: str) -> str:
+        name = re.sub(r'[^0-9a-zA-Z_]+', '_', name)
+
+        # check name starts with any digit
+        if re.match(r'^\d', name):             
+            name = f'_{name}'
+
+        if len(name) <= 3:
+            raise ValueError(f'Sanitized rule name "{name}" less than 3 chars')
+        return name
 
     def _indent(self, value: str) -> str:
         prefix = ' ' * self.indent

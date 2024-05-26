@@ -65,28 +65,23 @@ class YaraInstructions(YaraEntity):
             indent: int = 2,
             **kwargs) -> str:
 
-        if len(self.entities) == 1:
-            insn = self.entities[0]
-            data = insn.escape(escape_relative=not strict)
-
-            return f"{{ {data} }}" 
-
-        result = '{\n'
+        result = '{\n' if len(self.entities) > 1 else ''
         for insn in self.entities:
-            data = insn.escape(escape_relative=not strict)
-
             result += ' ' * indent
+
+            data = insn.escape(escape_relative=not strict)
+            if len(self.entities) == 1:
+                data = f'{{ {data} }}'
+
             if show_comments:
-                comment = str(insn)
-                comment = f'{comment[:48]}...' if len(comment) > 48 else comment
-                result += f'{data:30} // {comment}'
+                result += f'{data:30} // {insn.comment()}'
             else:
                 result += data
             result += '\n'
 
-        result += '}'
+        result += '}' if len(self.entities) > 1 else ''
         return result
-
+    
     def __hash__(self) -> int:
         return hash(tuple(map(str, self.entities)))
 

@@ -99,9 +99,16 @@ class Instruction(object):
 
         return ' '.join(data)
 
-    def __str__(self) -> str:
+    def comment(self, max_length: int = 48) -> str:
         flags = idaapi.GENDSM_REMOVE_TAGS
-        return idaapi.generate_disasm_line(self.address, flags)
+        comment = idaapi.generate_disasm_line(self.address, flags)
+        if len(comment) <= max_length:
+            return comment
+
+        return f'{comment[:48]}...'
+
+    def __str__(self) -> str:
+        return self.comment()
     
     def __repr__(self) -> str:
         insn = ' '.join(str(self).split())

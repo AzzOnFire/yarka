@@ -90,7 +90,7 @@ class Instruction(object):
             start = op.byte_offset
             if i != len(operands) - 1:
                 next_start = operands[i + 1].byte_offset
-                end = max(next_start, self.insn.size)
+                end = min(next_start, self.insn.size)
             else:
                 end = self.insn.size
 

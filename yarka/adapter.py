@@ -21,7 +21,7 @@ class YaraExtractor(object):
         sequence = []
 
         for entity in self.iterable:
-            if not entity:
+            if not entity and entity != 0x00:
                 continue
 
             if current_type is not type(entity):

@@ -1,10 +1,9 @@
-from PyQt5.QtCore import QRegExp, QRegularExpressionMatch
-from PyQt5.QtGui import QSyntaxHighlighter
+from .PyQt import QtCore, QtGui
 
 from .styles import LIGHT_STYLES
 
 
-class YaraHighlighter(QSyntaxHighlighter):
+class YaraHighlighter(QtGui.QSyntaxHighlighter):
     """Syntax highlighter for the Yara language.
     """
     keywords = [
@@ -36,7 +35,7 @@ class YaraHighlighter(QSyntaxHighlighter):
     ]
 
     def __init__(self, document):
-        QSyntaxHighlighter.__init__(self, document)
+        super().__init__(document)
 
         rules = []
 
@@ -64,10 +63,10 @@ class YaraHighlighter(QSyntaxHighlighter):
             (r'//[^\n]*', 0, 'comment'),
         ]
 
-        self.multiline_start = QRegExp(r'/\*')
-        self.multiline_end = QRegExp(r'\*/')
+        self.multiline_start = QtCore.QRegularExpression(r'/\*')
+        self.multiline_end = QtCore.QRegularExpression(r'\*/')
 
-        self.rules = [(QRegExp(pat), index, fmt) for (pat, index, fmt) in rules]
+        self.rules = [(QtCore.QRegularExpression(pat), index, fmt) for (pat, index, fmt) in rules]
 
     @property
     def styles(self):
@@ -77,34 +76,46 @@ class YaraHighlighter(QSyntaxHighlighter):
         """Apply syntax highlighting to the given block of text.
         """
         # Do other syntax formatting
-        for expression, nth, format in self.rules:
-            index = expression.indexIn(text, 0)
-            format = self.styles[format]
+        for expression, nth, fmt in self.rules:
+            fmt = self.styles[fmt]
 
-            while index >= 0:
+            iterator = expression.globalMatch(text, 0)
+            while iterator.hasNext():
                 # We actually want the index of the nth match
-                index = expression.pos(nth)
-                length = len(expression.cap(nth))
-                self.setFormat(index, length, format)
-                index = expression.indexIn(text, index + length)
+                match = iterator.next()
+                self.setFormat(
+                    match.capturedStart(nth), 
+                    match.capturedLength(nth),
+                    fmt
+                )
 
         self.setCurrentBlockState(0)
-        self.match_multiline(text, 'string')
+        self.match_multiline(text, self.styles['string'])
 
-    def match_multiline(self, text, style):
-        self.setCurrentBlockState(0)
+    def match_multiline(self, text, fmt):
         start_index = 0
-        if self.previousBlockState() != 1:
-            start_index = self.multiline_start.indexIn(text)
-
-        while start_index >= 0:
-            end_index = self.multiline_end.indexIn(text, start_index)
-            if end_index == -1:
-                self.setCurrentBlockState(1)
-                length = len(text) - start_index
+        if self.previousBlockState() == 1:
+            # Inside a multi-line comment
+            end_match = self.multiline_end.match(text)
+            if end_match.hasMatch():
+                length = end_match.capturedEnd() - start_index
+                self.setFormat(start_index, length, fmt)
+                start_index = end_match.capturedEnd()
+                self.setCurrentBlockState(0)
             else:
-                pattern_length = len(self.multiline_end.pattern())
-                length = end_index - start_index + pattern_length
+                self.setFormat(start_index, len(text), fmt)
+                self.setCurrentBlockState(1)
+                return
 
-            self.setFormat(start_index, length, self.styles[style])
-            start_index = self.multiline_start.indexIn(text, start_index + length)
+        start_match = self.multiline_start.match(text, start_index)
+        while start_match.hasMatch():
+            end_match = self.multiline_end.match(text, start_match.capturedEnd())
+            if end_match.hasMatch():
+                length = end_match.capturedEnd() - start_match.capturedStart()
+                self.setFormat(start_match.capturedStart(), length, fmt)
+                start_index = end_match.capturedEnd()
+            else:
+                self.setFormat(start_match.capturedStart(), len(text) - start_match.capturedStart(), fmt)
+                self.setCurrentBlockState(1)
+                return
+            start_match = self.multiline_start.match(text, start_index)

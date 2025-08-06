@@ -1,8 +1,6 @@
 from .highlighter import YaraHighlighter
 
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import Qt
+from .PyQt import QtGui, QtWidgets, QtCore
 
 
 class Checkbox(QtWidgets.QCheckBox):
@@ -13,12 +11,12 @@ class Checkbox(QtWidgets.QCheckBox):
             on_click = None):
         super().__init__(label)
         
-        self.setCheckState(Qt.Checked if default else Qt.Unchecked)
+        self.setCheckState(QtCore.Qt.Checked if default else QtCore.Qt.Unchecked)
         if on_click:
             self.clicked.connect(on_click)
 
     def is_checked(self) -> bool:
-        return self.checkState() == Qt.Checked
+        return self.checkState() == QtCore.Qt.Checked
 
 
 class Button(QtWidgets.QPushButton):
@@ -54,7 +52,7 @@ class Label(QtWidgets.QLabel):
 
 
 class YaraTextEdit(QtWidgets.QPlainTextEdit):
-    smarten_punctuation = pyqtSignal()
+    smarten_punctuation = QtCore.pyqtSignal()
 
     def __init__(self, default: str, highlighting: bool = True):
         super().__init__(None)
@@ -70,7 +68,7 @@ class YaraTextEdit(QtWidgets.QPlainTextEdit):
         self.setFont(font)
 
         metrics = QtGui.QFontMetrics(font)
-        self.setTabStopWidth(4 * metrics.width(' '))
+        self.setTabStopDistance(4 * metrics.horizontalAdvance(' '))
         self.set_content(default)
 
     def set_content(self, text: str):

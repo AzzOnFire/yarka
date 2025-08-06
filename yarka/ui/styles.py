@@ -1,17 +1,17 @@
-from PyQt5.QtGui import QFont, QColor, QTextCharFormat
+from .PyQt import QtGui
 
 
 def format(color, style=''):
     """
     Return a QTextCharFormat with the given attributes.
     """
-    _color = QColor()
+    _color = QtGui.QColor()
     _color.setNamedColor(color)
 
-    _format = QTextCharFormat()
+    _format = QtGui.QTextCharFormat()
     _format.setForeground(_color)
     if 'bold' in style:
-        _format.setFontWeight(QFont.Weight.Bold)
+        _format.setFontWeight(QtGui.QFont.Weight.Bold)
     if 'italic' in style:
         _format.setFontItalic(True)
 

@@ -1,5 +1,4 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from .PyQt import QtWidgets, QtCore
 
 from .components import Button
 
@@ -40,6 +39,6 @@ class ClosableDialog(QtWidgets.QDialog):
             self.layout.addWidget(element)
 
         self.bottom_layout = QtWidgets.QHBoxLayout()
-        self.bottom_layout.setAlignment(Qt.AlignRight | Qt.AlignBottom)
+        self.bottom_layout.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
         self.bottom_layout.addWidget(self.close_btn)
         self.layout.addLayout(self.bottom_layout)

@@ -1,0 +1,12 @@
+{
+    "IDAMetadataDescriptorVersion": 1,
+    "plugin": {
+      "name": "yarka",
+      "entryPoint": "yarka",
+      "categories": ["malware-analysis", "ui-ux-and-visualization"],
+      "logoPath": "images/logo.jpg",
+      "idaVersions": ">=8.3",
+      "description" : "IDA plugin with no dependencies to easily create YARA signatures by selecting a set of instructions, strings or binary data",
+      "version": "0.7"
+    }
+  }

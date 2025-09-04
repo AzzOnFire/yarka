@@ -7,6 +7,6 @@
       "logoPath": "images/logo.jpg",
       "idaVersions": ">=8.3",
       "description" : "IDA plugin with no dependencies to easily create YARA signatures by selecting a set of instructions, strings or binary data",
-      "version": "0.7"
+      "version": "0.7.0"
     }
   }

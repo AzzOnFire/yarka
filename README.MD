@@ -15,7 +15,23 @@ Just select chunk and press `Ctrl+Y` to make the rule
 - Easy customization (see "[Customization](#customization)" section)
 
 ### Installation
-Copy `yarka.py` and `yarka` to your IDA plugins directory (`%IDA_HOME%/plugins`).
+
+#### Using hcli (Recommended)
+The easiest way to install Yarka is using the [Hex-Rays CLI tool (hcli)](https://github.com/HexRaysSA/ida-hcli):
+```bash
+pip install ida-hcli
+hcli plugin install yarka
+```
+
+This will automatically install the plugin to your IDA user directory.
+
+#### Manual Installation
+Alternatively, you can manually install the plugin:
+1. Copy `yarka.py` and the `yarka` folder to your IDA plugins directory
+2. The plugins directory location depends on your system:
+   - **Windows**: `%APPDATA%\Hex-Rays\IDA Pro\plugins\`
+   - **macOS**: `~/Library/Application Support/IDA Pro/plugins/`
+   - **Linux**: `~/.idapro/plugins/`
 
 ### Customization
 You can customize the rules format to suit your needs.

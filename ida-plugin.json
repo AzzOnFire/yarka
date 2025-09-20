@@ -2,11 +2,30 @@
     "IDAMetadataDescriptorVersion": 1,
     "plugin": {
       "name": "yarka",
-      "entryPoint": "yarka",
+      "entryPoint": "yarka.py",
       "categories": ["malware-analysis", "ui-ux-and-visualization"],
       "logoPath": "images/logo.png",
       "idaVersions": ">=8.3",
       "description" : "IDA plugin with no dependencies to easily create YARA signatures by selecting a set of instructions, strings or binary data",
-      "version": "0.7.0"
+      "version": "0.7.0",
+      "license": "GPL-3.0",
+      "urls": {
+        "repository": "https://github.com/AzzOnFire/yarka"
+      },
+      "authors": [{
+        "name": "AzzOnFire"
+      }],
+      "keywords": [
+        "yara",
+        "signature-generation",
+        "malware-analysis",
+        "pattern-matching",
+        "rule-creation",
+        "disassembly-selection",
+        "decompiler",
+        "strings-extraction",
+        "hunting-rules",
+        "threat-detection"
+      ]
     }
   }

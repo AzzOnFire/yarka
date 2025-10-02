@@ -3,6 +3,8 @@ from typing import Optional, List
 import idaapi
 import idc
 import ida_nalt
+import ida_strlist
+import ida_bytes
 
 
 class Operand(object):
@@ -121,15 +123,28 @@ class String(object):
         self.string = string.decode() if hasattr(string, 'decode') else string
         self.bytes_per_char = bytes_per_char
 
-    @classmethod
-    def from_ea(cls, ea) -> Optional["String"]:
-        size_adapter = {
+    @staticmethod
+    def symbol_size_by_type(str_type: int):
+        return {
             ida_nalt.STRTYPE_C: 1,
             ida_nalt.STRTYPE_C_16: 2,
+            ida_nalt.STRTYPE_PASCAL: 2,
             ida_nalt.STRTYPE_C_32: 4,
             0x2000001: 2,
-        }
+        }.get(str_type, 1)
 
+    @classmethod
+    def from_string_info(cls, info: ida_strlist.string_info_t) -> Optional["String"]:
+        string = ida_bytes.get_strlit_contents(info.ea, info.length, info.type)
+        if not string:
+            return None
+
+        bytes_per_char = cls.symbol_size_by_type(info.type)
+
+        return cls(info.ea, string.decode(), bytes_per_char)
+
+    @classmethod
+    def from_ea(cls, ea) -> Optional["String"]:
         str_type = idc.get_str_type(ea)
         if str_type is None:
             return None
@@ -138,7 +153,7 @@ class String(object):
         if not string:
             return None
 
-        bytes_per_char = size_adapter[str_type]
+        bytes_per_char = cls.symbol_size_by_type(str_type)
 
         return cls(ea, string.decode(), bytes_per_char)
 

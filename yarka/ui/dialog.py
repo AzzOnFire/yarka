@@ -5,19 +5,20 @@ from .components import Button
 
 class ClosableDialog(QtWidgets.QDialog):
     def __init__(
-            self,
-            title: str = 'Dialog',
-            width: int = 800,
-            heihgt: int = 600,
-            top_left_items: list = None,
-            top_right_items: list = None,
-            body_items: list = None
-        ):
-
+        self,
+        title: str = "Dialog",
+        width: int = 800,
+        heihgt: int = 600,
+        top_left_items: list | None = None,
+        top_right_items: list | None = None,
+        body_items: list | None = None,
+    ):
         super().__init__(None)
         self.setWindowTitle(title)
         self.resize(width, heihgt)
-        self._build_dialog(top_left_items, top_right_items, body_items)
+        self._build_dialog(
+            top_left_items or [], top_right_items or [], body_items or []
+        )
 
     def handle_close_click(self):
         self.close()

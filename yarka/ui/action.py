@@ -3,7 +3,7 @@ import ida_kernwin
 
 
 class ActionHandler(idaapi.action_handler_t):
-    __windows__ = []
+    __windows__: list = []
 
     @classmethod
     def get_name(cls):
@@ -20,10 +20,10 @@ class ActionHandler(idaapi.action_handler_t):
         instance = cls()
 
         action = idaapi.action_desc_t(
-            cls.get_name(),
-            instance.get_label(),
-            instance,
-            hotkey
+            cls.get_name(), 
+            instance.get_label(), 
+            instance, 
+            hotkey,
         )
 
         return idaapi.register_action(action)
@@ -34,7 +34,7 @@ class ActionHandler(idaapi.action_handler_t):
 
     @classmethod
     def update(cls, ctx):
-        if hasattr(cls, '__windows__') and ctx.widget_type in cls.__windows__:
+        if hasattr(cls, "__windows__") and ctx.widget_type in cls.__windows__:
             return ida_kernwin.AST_ENABLE_FOR_WIDGET
 
         return ida_kernwin.AST_DISABLE_FOR_WIDGET

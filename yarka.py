@@ -3,8 +3,10 @@ from itertools import chain
 import idaapi
 import ida_kernwin
 import ida_funcs
+import ida_strlist
 
 from yarka.adapter import YaraExtractor
+from yarka.types import String
 from yarka.extractor import RangeExtractor, FunctionExtractor
 from yarka.yara import RuleBuilder, RulesetBuilder
 from yarka import ui
@@ -188,11 +190,11 @@ class YarkaStrings(ui.ActionHandler):
     def activate(self, ctx):
         strings = []
         for idx in ctx.chooser_selection:
-            data = ida_kernwin.get_chooser_data(ctx.widget_title, idx)
-            location, *_ = data
-            address = int(location.split(':')[-1].lstrip('0'), 16)
+            si = ida_strlist.string_info_t()
+            if not ida_strlist.get_strlist_item(si, idx):
+                continue
 
-            string_gen = YaraExtractor(RangeExtractor(address, address + 1))
+            string_gen = YaraExtractor([String.from_string_info(si)])
             strings.append(string_gen)
         
         name = f'{utils.get_file_name()}_strings'

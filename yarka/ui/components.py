@@ -31,7 +31,7 @@ class Button(QtWidgets.QPushButton):
 class NumberInput(QtWidgets.QSpinBox):
     def __init__(
             self,
-            default: int = None,
+            default: int | None = None,
             min_value: int = 0,
             max_value: int = 100,
             step: int = 1,

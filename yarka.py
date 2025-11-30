@@ -21,6 +21,7 @@ INDENT_HEADERS = False          # indent for 'meta', 'strings', 'condition'
 DEFAULT_SHOW_COMMENTS = True    # show comments (checkbox)
 DEFAULT_STRICT_RULE = False     # don't wildcard relative offsets (checkbox)
 DEFAULT_INDENT = 2              # default indent
+DEFAULT_NAMED_VARIABLES = True  # use names for strings (variables)
 
 # values can be string or lambda
 DEFAULT_META_FIELDS = {
@@ -75,6 +76,11 @@ class YaraDialog(ui.ClosableDialog):
             default=DEFAULT_SHOW_COMMENTS,
             on_click=self.handle_comments_checkbox_click,
         )
+        self.use_named_variables_checkbox = ui.Checkbox(
+            label='named variables',
+            default=DEFAULT_NAMED_VARIABLES,
+            on_click=self.handle_named_variables_click,
+        )
         self.indent_edit_label = ui.Label('indentation')
         self.indent_edit = ui.NumberInput(
             default=DEFAULT_INDENT,
@@ -88,7 +94,11 @@ class YaraDialog(ui.ClosableDialog):
         super().__init__(
             title = 'Yarka - Generated Yara Rule',
             width=800,
-            top_left_items=[self.strict_checkbox, self.comments_checkbox],
+            top_left_items=[
+                self.strict_checkbox,
+                self.comments_checkbox,
+                self.use_named_variables_checkbox,
+            ],
             top_right_items=[self.indent_edit_label, self.indent_edit],
             body_items=[self.text_edit]
         )
@@ -103,6 +113,10 @@ class YaraDialog(ui.ClosableDialog):
 
     def handle_comments_checkbox_click(self):
         self.rule.show_comments = self.comments_checkbox.is_checked()
+        self._rebuild_rule()
+
+    def handle_named_variables_click(self):
+        self.rule.use_named_variables = self.use_named_variables_checkbox.is_checked()
         self._rebuild_rule()
 
     def handle_indent_change(self):
@@ -164,7 +178,7 @@ class YarkaPlugin(idaapi.plugin_t):
             except Exception as e:
                 ida_kernwin.warning(f'Yarka - unexpected error {e}')
 
-        ida_kernwin.replace_wait_box(f'Building ruleset ...')
+        ida_kernwin.replace_wait_box('Building ruleset ...')
 
         self.dialog = YaraDialog(ruleset)
         self.dialog.show()

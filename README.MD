@@ -39,6 +39,7 @@ Rule editor default parameters (also editable in the editor window):
 - `DEFAULT_SHOW_COMMENTS` - show comments (default: `True`) 
 - `DEFAULT_STRICT_RULE` - don't wildcard relative offsets (default: `False`)
 - `DEFAULT_INDENT` - rule indentation (default: `2`)
+- `DEFAULT_NAMED_VARIABLES` = use names for strings (default: `True`)
 
 Default fields in `meta` section. Values can be string or lambda functions
 ```python

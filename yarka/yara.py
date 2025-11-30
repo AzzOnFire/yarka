@@ -16,6 +16,7 @@ class RuleBuilder(object):
             indent: int = 2,
             indent_headers: bool = False,
             wrap_curly_brace: bool = False,
+            use_named_variables: bool = True,
         ):
         self.name = self._escape_name(name)
 
@@ -24,6 +25,7 @@ class RuleBuilder(object):
         self.indent = indent
         self.indent_headers = indent_headers
         self.wrap_curly_brace = wrap_curly_brace
+        self.use_named_variables = use_named_variables
 
         self.meta: Dict[str, Union[str, Callable]] = {}
         self.strings: Dict[str, YaraEntity] = {}
@@ -96,7 +98,8 @@ class RuleBuilder(object):
                 strict=self.strict,
                 indent=self.indent,
             )
-            result += self._indent(f'${key} = {content}')
+            var_name = key if self.use_named_variables else ''
+            result += self._indent(f'${var_name} = {content}')
             result += '\n'
         result += "\n"
         return result

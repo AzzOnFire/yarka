@@ -42,9 +42,12 @@ class YaraString(YaraEntity):
         return result
 
     def __hash__(self) -> int:
-        return hash(tuple(map(str, self.entities)))
+        return hash(self.data)
 
-    def __eq__(self, other: "YaraString") -> bool:
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, YaraString):
+            raise TypeError()
+
         return self.data == other.data
 
     def __str__(self) -> str:
@@ -85,7 +88,10 @@ class YaraInstructions(YaraEntity):
     def __hash__(self) -> int:
         return hash(tuple(map(str, self.entities)))
 
-    def __eq__(self, other: "YaraInstructions") -> bool:
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, YaraInstructions):
+            raise TypeError()
+
         return tuple(self.entities) == tuple(other.entities)
 
     def __len__(self) -> int:
@@ -122,7 +128,10 @@ class YaraBytes(YaraEntity):
     def __hash__(self) -> int:
         return hash(self.data)
 
-    def __eq__(self, other: "YaraString") -> bool:
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, YaraBytes):
+            raise TypeError()
+
         return self.data == other.data
 
     def __len__(self) -> int:
